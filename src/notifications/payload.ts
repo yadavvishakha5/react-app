@@ -4,15 +4,31 @@ import type {
   NotificationKind,
 } from './types';
 
-function asText(value: string | null | undefined, fallback = ''): string {
+function asText(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value.trim() : fallback;
+}
+
+function normalizeData(
+  data: Record<string, string | object> | null | undefined,
+): Record<string, string> {
+  if (!data) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? value : JSON.stringify(value),
+    ]),
+  );
 }
 
 function resolveKind(message: FcmRemoteMessageLike): NotificationKind {
   const hasNotification = Boolean(
     message.notification?.title || message.notification?.body,
   );
-  const hasData = Boolean(message.data && Object.keys(message.data).length > 0);
+  const data = normalizeData(message.data);
+  const hasData = Object.keys(data).length > 0;
 
   if (hasNotification && hasData) {
     return 'notification+data';
@@ -33,7 +49,7 @@ export function parseRemoteMessage(
   message: FcmRemoteMessageLike,
   receivedAt = Date.now(),
 ): AppNotification {
-  const data = message.data ?? {};
+  const data = normalizeData(message.data);
   const kind = resolveKind(message);
   const title =
     asText(message.notification?.title) || asText(data.title) || 'Notification';

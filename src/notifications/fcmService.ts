@@ -30,7 +30,6 @@ import {
 import type {
   AppNotification,
   DeviceTokenPayload,
-  FcmRemoteMessageLike,
   TokenRegistrationResult,
 } from './types';
 
@@ -141,7 +140,7 @@ export async function unsubscribeDefaultTopic(): Promise<void> {
 export function listenForForegroundMessages(
   onNotification: (notification: AppNotification) => void,
 ): () => void {
-  return onMessage(messaging, async (remoteMessage: FcmRemoteMessageLike) => {
+  return onMessage(messaging, async remoteMessage => {
     const notification = parseRemoteMessage(remoteMessage);
     await appendNotificationLog(notification);
     onNotification(notification);
@@ -168,12 +167,9 @@ export function listenForTokenRefresh(
 export function listenForNotificationOpened(
   onNotification: (notification: AppNotification) => void,
 ): () => void {
-  return onNotificationOpenedApp(
-    messaging,
-    async (remoteMessage: FcmRemoteMessageLike) => {
-      const notification = parseRemoteMessage(remoteMessage);
-      await appendNotificationLog(notification);
-      onNotification(notification);
-    },
-  );
+  return onNotificationOpenedApp(messaging, async remoteMessage => {
+    const notification = parseRemoteMessage(remoteMessage);
+    await appendNotificationLog(notification);
+    onNotification(notification);
+  });
 }

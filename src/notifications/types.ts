@@ -44,5 +44,5 @@ export type FcmRemoteMessageLike = {
     title?: string | null;
     body?: string | null;
   } | null;
-  data?: Record<string, string> | null;
+  data?: Record<string, string | object> | null;
 };

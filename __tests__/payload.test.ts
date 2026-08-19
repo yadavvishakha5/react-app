@@ -48,6 +48,18 @@ describe('parseRemoteMessage', () => {
     expect(result.deeplink).toBe('inbox/42');
   });
 
+  it('stringifies non-string data values', () => {
+    const result = parseRemoteMessage({
+      data: {
+        title: 'Offer',
+        payload: { id: 42 },
+      },
+    });
+
+    expect(result.data.payload).toBe('{"id":42}');
+    expect(result.title).toBe('Offer');
+  });
+
   it('falls back to a local id when FCM omits messageId', () => {
     const result = parseRemoteMessage({}, 123);
     expect(result.id).toBe('local-123');
