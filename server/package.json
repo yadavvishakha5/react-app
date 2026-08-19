@@ -1,0 +1,15 @@
+{
+  "name": "fcm-push-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Token registry and FCM HTTP v1 sender for the React Native app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "send": "node sendNotification.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "firebase-admin": "^13.5.0"
+  }
+}
